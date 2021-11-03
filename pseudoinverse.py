@@ -92,3 +92,4 @@ if __name__ == '__main__':
         B = B@C
 
     assert matrix_distance(mat_A=A, mat_B=B) < 0.01, print("Inversion check failed.")
+
