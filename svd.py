@@ -18,7 +18,9 @@ def decompose(matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     1) Compute A^T * A
     2) Find eigenvalues and eigenvectors (with length 1) of computed matrix.
     3) Permute eigenvectors to order eigenvalues by size.
-    4)
+    4) construct V by combining the eigenvectors
+    5) construct sigma (E) by taking the square roots of the eigenvalues on a diagonal.
+    6) construct U by orthonormalizing the columns in the product of A and V
 
     :param matrix: Matrix to decompose.
     :return: the decomposed matrix A in 3 separate numpy.ndarray's. A = U*E*(V^T)
