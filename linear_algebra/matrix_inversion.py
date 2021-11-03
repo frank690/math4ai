@@ -1,3 +1,11 @@
+"""
+This module holds functions to do matrix inversions.
+"""
+
+__all__ = [
+    "regular_inverse",
+]
+
 import numpy as np
 
 
@@ -57,9 +65,9 @@ def divide_by_diagonal(matrix: np.ndarray, inverse: np.ndarray):
         inverse[row_num] /= diagonal_value
 
 
-def invert(matrix: np.ndarray) -> np.ndarray:
+def regular_inverse(matrix: np.ndarray) -> np.ndarray:
     """
-    Finds inverse of given matrix.
+    Finds inverse of given square matrix.
     :param matrix: Matrix to find inverse of.
     :return: The inverse of the given matrix.
     """
@@ -72,23 +80,3 @@ def invert(matrix: np.ndarray) -> np.ndarray:
     eliminate_non_diagonals(matrix=matrix_to_invert, dimension=dimension, inverse=inverse)
     divide_by_diagonal(matrix=matrix_to_invert, inverse=inverse)
     return inverse
-
-
-def matrix_distance(mat_A, mat_B):
-    sum_of_differences = 0
-    for i in range(len(mat_B)):
-        for j in range(len(mat_B[i])):
-            sum_of_differences += abs(mat_A[i, j] - mat_B[i, j])
-    print(f"Sum of differences: {sum_of_differences}")
-    return sum_of_differences
-
-
-if __name__ == '__main__':
-    A = np.array([[1., 2., 3.], [1., 1., 1.], [5., 2., 1.]])
-    inverse_A = invert(matrix=A)
-    B = np.eye(3)
-
-    for C in [inverse_A]:
-        B = B@C
-
-    assert matrix_distance(mat_A=A, mat_B=B) < 0.01, print("Inversion check failed.")
