@@ -21,7 +21,7 @@ def decompose(matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     4)
 
     :param matrix: Matrix to decompose.
-    :return:
+    :return: the decomposed matrix A in 3 separate numpy.ndarray's. A = U*E*(V^T)
     """
     float_matrix = matrix.astype(float)
     min_dimension = min(float_matrix.shape)
@@ -37,7 +37,7 @@ def decompose(matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     E[:min_dimension, :min_dimension] += sqrt_diagonal_eigenvalues
     U = orthonormalize(matrix=float_matrix@V)
 
-    return U, E, V
+    return U, E, np.transpose(V)
 
 
 def orthonormalize(matrix: np.ndarray) -> np.ndarray:
