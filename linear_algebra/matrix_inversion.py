@@ -4,8 +4,10 @@ This module holds functions to do matrix inversions.
 
 __all__ = [
     "regular_inverse",
+    "pseudoinverse",
 ]
 
+from .svd import decompose
 import numpy as np
 
 
@@ -80,3 +82,18 @@ def regular_inverse(matrix: np.ndarray) -> np.ndarray:
     eliminate_non_diagonals(matrix=matrix_to_invert, dimension=dimension, inverse=inverse)
     divide_by_diagonal(matrix=matrix_to_invert, inverse=inverse)
     return inverse
+
+
+def pseudoinverse(matrix: np.ndarray) -> np.ndarray:
+    """
+    Computes the Moore-Penrose-Inverse (aka pseudoinverse).
+    :param matrix: Matrix to compute pseudo-inverse from.
+    :return: The pseudo-inverse matrix itself.
+    """
+    U, E, V_T = decompose(matrix=matrix)
+    V = np.transpose(V_T)
+    U_T = np.transpose(U)
+    sigma = np.zeros_like(np.transpose(E))
+    diagonal_elements = np.diag(1/np.diagonal(E))
+    sigma[:diagonal_elements.shape[0], :diagonal_elements.shape[1]] = diagonal_elements
+    return V@sigma@U_T

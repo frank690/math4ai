@@ -15,17 +15,17 @@ def decompose(matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     Apply the singular value decompositon to the given matrix.
     This process is done in 6 steps. Assume given matrix is A.
 
-    1) Compute A^T * A
+    1) Compute A^T * A.
     2) Find eigenvalues and eigenvectors (with length 1) of computed matrix.
-    3) Permute eigenvectors to order eigenvalues by size.
-    4) construct V by combining the eigenvectors
+    3) Order eigenvectors by size of eigenvalues.
+    4) construct V by combining the eigenvectors.
     5) construct sigma (E) by taking the square roots of the eigenvalues on a diagonal.
-    6) construct U by orthonormalizing the columns in the product of A and V
+    6) construct U by orthonormalizing the columns in the product of A and V.
 
     :param matrix: Matrix to decompose.
     :return: the decomposed matrix A in 3 separate numpy.ndarray's. A = U*E*(V^T)
     """
-    float_matrix = matrix.astype(float)
+    float_matrix = matrix.astype(complex)
     min_dimension = min(float_matrix.shape)
 
     dot_product = np.transpose(float_matrix)@float_matrix
@@ -38,6 +38,10 @@ def decompose(matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     sqrt_diagonal_eigenvalues = np.identity(n=min_dimension) * np.sqrt(eigenvalues[:min_dimension])
     E[:min_dimension, :min_dimension] += sqrt_diagonal_eigenvalues
     U = orthonormalize(matrix=float_matrix@V)
+
+    U = np.real_if_close(U)
+    E = np.real_if_close(E)
+    V = np.real_if_close(V)
 
     return U, E, np.transpose(V)
 
@@ -52,14 +56,14 @@ def orthonormalize(matrix: np.ndarray) -> np.ndarray:
     """
     n, m = matrix.shape
     norm_matrix = normalize(matrix)
-    if n > m:
+    if n > m:  # create new dimensions (base) and use the dot product to have them orthogonal to existing bases.
         num_missing_dimensions = n - m
         for _ in range(num_missing_dimensions):
             new_basis = np.random.random(size=(n,))
             for basis in norm_matrix.transpose():
                 new_basis = projection(vector=new_basis, basis=basis)
             norm_matrix = np.c_[norm_matrix, new_basis]
-    elif n < m:
+    elif n < m:  # remove unnecessary columns
         norm_matrix = norm_matrix[:, :n]
     return norm_matrix
 
@@ -84,4 +88,8 @@ def normalize(matrix: np.ndarray, axis=0) -> np.ndarray:
     :param axis: Axis to normalize along.
     :return: Normalized matrix.
     """
-    return matrix / np.sqrt(np.sum(np.power(matrix, 2), axis=axis))
+    divisor = np.sqrt(np.sum(np.power(matrix, 2), axis=axis))
+    nonzero = divisor > 0
+    if axis == 0:
+        return matrix[:, nonzero] / divisor[nonzero]
+    return matrix[nonzero, :] / divisor[nonzero]
