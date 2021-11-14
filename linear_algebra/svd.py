@@ -89,7 +89,4 @@ def normalize(matrix: np.ndarray, axis=0) -> np.ndarray:
     :return: Normalized matrix.
     """
     divisor = np.sqrt(np.sum(np.power(matrix, 2), axis=axis))
-    nonzero = divisor > 0
-    if axis == 0:
-        return matrix[:, nonzero] / divisor[nonzero]
-    return matrix[nonzero, :] / divisor[nonzero]
+    return np.true_divide(matrix, divisor, where=divisor > 0)
