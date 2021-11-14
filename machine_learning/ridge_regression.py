@@ -1,5 +1,5 @@
 import numpy as np
-from random import shuffle
+from random import Random
 from typing import Tuple, List
 
 
@@ -52,7 +52,7 @@ def kfold(X: np.ndarray, y: np.ndarray, folds: int = 1) -> Tuple[np.ndarray, np.
     """
     num_samples = X.shape[0]
     indices = [index for index in range(num_samples)]
-    shuffle(indices)
+    Random(42).shuffle(indices)
     splits = np.array_split(indices, folds)
     for split in splits:
         mask = np.zeros(num_samples, dtype=bool)
@@ -78,7 +78,7 @@ class RidgeLinearRegression:
 
 
 if __name__ == '__main__':
-    data = np.genfromtxt("./data/boston.txt", dtype=float, skip_header=22)
+    data = np.genfromtxt("../data/boston.txt", dtype=float, skip_header=22)
     testing_data = data[:100, :]
     training_data = data[100:, :]
     X, y = separate_features_from_target(training_data)
