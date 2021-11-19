@@ -1,5 +1,4 @@
 """This module contains functions regarding the hull of a convex function."""
-
 import numpy as np
 from typing import List, Tuple
 
@@ -16,8 +15,8 @@ def min_list(data: List[Tuple]) -> List[Tuple]:
 
     while poi not in hull:
         hull.append(poi)
-        modified_datapoints = substract_coordinates(points=datapoints, point=poi)
-        next_poi, angle = smallest_counter_clockwise_angle(points=modified_datapoints, previous_angle=angle)
+        shifted_data = substract_coordinates(points=data, point=poi)
+        next_poi, angle = smallest_counter_clockwise_angle(points=shifted_data, previous_angle=angle)
         poi = tuple(map(sum, zip(next_poi, poi)))
 
     return hull
