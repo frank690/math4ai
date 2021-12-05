@@ -70,7 +70,6 @@ def orthonormalize(matrix: np.ndarray) -> np.ndarray:
 
 def projection(vector: np.array, basis: np.array) -> np.array:
     """
-    Compute the projection of a given vector onto the given basis.
     :param vector: Vector to project on basis.
     :param basis: Basis to project the vector on.
     :return: Projected vector.

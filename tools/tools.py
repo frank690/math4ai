@@ -4,11 +4,15 @@ This module contains a variety of functions I like to use from time to time.
 
 __all__ = [
     "numerical_gradient",
+    "draw_learning_curve",
 ]
 
 
 import numpy as np
-from typing import Callable
+import matplotlib.pyplot as plt
+
+from typing import Callable, Optional
+from matplotlib.figure import Figure
 
 
 def numerical_gradient(f: Callable, key: str, eps: float = 1e-10, **kwargs) -> np.ndarray:
@@ -44,3 +48,16 @@ def numerical_gradient(f: Callable, key: str, eps: float = 1e-10, **kwargs) -> n
 
     incremental_results = np.stack(incremental_results, axis=1)
     return np.squeeze((incremental_results - base_result) / eps)
+
+
+def draw_learning_curve(data: np.ndarray, figure: Optional[Figure] = None) -> Figure:
+    """
+    Draws the learning curve of the given data array.
+    :param data: Cost trend to plot.
+    :param figure: Figure to update with the given data.
+    :return: Figure containing the learning curve.
+    """
+    if figure is None:
+        figure = plt.figure()
+
+    return figure
