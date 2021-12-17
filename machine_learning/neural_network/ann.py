@@ -9,6 +9,7 @@ import numpy as np
 
 class NeuralNetwork:
     """A class that represents a neural network."""
+
     def __init__(self, layout: np.ndarray, initialization: str = "he"):
         """
         Initialize the neural network.
@@ -48,7 +49,9 @@ class NeuralNetwork:
         elif self.initialization == "he":
             return self._init_he(layer=layer)
         else:
-            raise ValueError(f"Unknown initialization method: {self.initialization}. Please choose a valid method.")
+            raise ValueError(
+                f"Unknown initialization method: {self.initialization}. Please choose a valid method."
+            )
 
     def _init_xavier(self, layer: int) -> float:
         """
@@ -58,7 +61,9 @@ class NeuralNetwork:
         :return: Spread factor for the normal distribution.
         """
         amp = np.sqrt(6) / np.sqrt(self.layout[layer] + self.layout[layer + 1])
-        weights = np.random.uniform(-amp, amp, (self.layout[layer + 1], self.layout[layer]))
+        weights = np.random.uniform(
+            -amp, amp, (self.layout[layer + 1], self.layout[layer])
+        )
         return np.c_[weights, np.zeros(self.layout[layer + 1])]
 
     def _init_he(self, layer: int) -> float:

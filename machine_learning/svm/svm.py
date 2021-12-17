@@ -6,6 +6,7 @@ from typing import Tuple
 
 class LinearSVM:
     """Class that represents a linear SVM for separable data."""
+
     def __init__(self):
         """
         store given parameters and initialize the class.
@@ -37,10 +38,12 @@ class LinearSVM:
             cost_w[mask] = 0
             cost_b = -self.y
             cost_b[mask] = 0
-            return \
-                np.reshape(self.w - np.mean(cost_w, axis=0), self.w.shape), \
-                np.reshape(np.mean(cost_b, axis=0), self.b.shape)
-        return 0.5 * self.w.T @ self.w + np.mean(np.maximum(0, 1 - np.multiply(self.y, (self.X @ self.w + self.b))))
+            return np.reshape(
+                self.w - np.mean(cost_w, axis=0), self.w.shape
+            ), np.reshape(np.mean(cost_b, axis=0), self.b.shape)
+        return 0.5 * self.w.T @ self.w + np.mean(
+            np.maximum(0, 1 - np.multiply(self.y, (self.X @ self.w + self.b)))
+        )
 
     def gradient_descent(self, batch_size: int = 1):
         """

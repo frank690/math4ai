@@ -28,16 +28,18 @@ def decompose(matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     float_matrix = matrix.astype(complex)
     min_dimension = min(float_matrix.shape)
 
-    dot_product = np.transpose(float_matrix)@float_matrix
+    dot_product = np.transpose(float_matrix) @ float_matrix
     eigenvalues, eigenvectors = np.linalg.eig(a=dot_product)
     sorting_index = eigenvalues.argsort()[::-1]
     eigenvalues = eigenvalues[sorting_index]
 
     V = eigenvectors[:, sorting_index]
     E = np.zeros_like(float_matrix)
-    sqrt_diagonal_eigenvalues = np.identity(n=min_dimension) * np.sqrt(eigenvalues[:min_dimension])
+    sqrt_diagonal_eigenvalues = np.identity(n=min_dimension) * np.sqrt(
+        eigenvalues[:min_dimension]
+    )
     E[:min_dimension, :min_dimension] += sqrt_diagonal_eigenvalues
-    U = orthonormalize(matrix=float_matrix@V)
+    U = orthonormalize(matrix=float_matrix @ V)
 
     U = np.real_if_close(U)
     E = np.real_if_close(E)
@@ -56,7 +58,9 @@ def orthonormalize(matrix: np.ndarray) -> np.ndarray:
     """
     n, m = matrix.shape
     norm_matrix = normalize(matrix)
-    if n > m:  # create new dimensions (base) and use the dot product to have them orthogonal to existing bases.
+    if (
+        n > m
+    ):  # create new dimensions (base) and use the dot product to have them orthogonal to existing bases.
         num_missing_dimensions = n - m
         for _ in range(num_missing_dimensions):
             new_basis = np.random.random(size=(n,))

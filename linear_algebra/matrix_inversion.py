@@ -16,10 +16,16 @@ def pre_checks(matrix: np.ndarray):
     Apply multiple checks to see if matrix is invertible.
     :param matrix: Matrix to check.
     """
-    assert isinstance(matrix, np.ndarray), print("Given matrix is not of expected type numpy.ndarray.")
+    assert isinstance(matrix, np.ndarray), print(
+        "Given matrix is not of expected type numpy.ndarray."
+    )
     rows, columns = matrix.shape
-    assert rows == columns, print("The matrix you provided is not square and can thus not be an inverted.")
-    assert np.linalg.det(matrix) != 0, print("Matrix determinant is 0. Thus the matrix is not invertible.")
+    assert rows == columns, print(
+        "The matrix you provided is not square and can thus not be an inverted."
+    )
+    assert np.linalg.det(matrix) != 0, print(
+        "Matrix determinant is 0. Thus the matrix is not invertible."
+    )
 
 
 def fix_diagonal(matrix: np.ndarray, inverse: np.ndarray):
@@ -49,10 +55,16 @@ def eliminate_non_diagonals(matrix: np.ndarray, dimension: int, inverse: np.ndar
     for column_index in range(dimension):
         for row_index in range(dimension):
             if row_index != column_index:
-                inverse[row_index] -= \
-                    matrix[row_index][column_index] * inverse[column_index] / matrix[column_index][column_index]
-                matrix[row_index] -= \
-                    matrix[row_index][column_index] * matrix[column_index] / matrix[column_index][column_index]
+                inverse[row_index] -= (
+                    matrix[row_index][column_index]
+                    * inverse[column_index]
+                    / matrix[column_index][column_index]
+                )
+                matrix[row_index] -= (
+                    matrix[row_index][column_index]
+                    * matrix[column_index]
+                    / matrix[column_index][column_index]
+                )
 
 
 def divide_by_diagonal(matrix: np.ndarray, inverse: np.ndarray):
@@ -79,7 +91,9 @@ def regular_inverse(matrix: np.ndarray) -> np.ndarray:
 
     pre_checks(matrix=matrix_to_invert)
     fix_diagonal(matrix=matrix_to_invert, inverse=inverse)
-    eliminate_non_diagonals(matrix=matrix_to_invert, dimension=dimension, inverse=inverse)
+    eliminate_non_diagonals(
+        matrix=matrix_to_invert, dimension=dimension, inverse=inverse
+    )
     divide_by_diagonal(matrix=matrix_to_invert, inverse=inverse)
     return inverse
 
@@ -94,6 +108,8 @@ def pseudoinverse(matrix: np.ndarray) -> np.ndarray:
     V = np.transpose(V_T)
     U_T = np.transpose(U)
     sigma = np.zeros_like(np.transpose(E))
-    diagonal_elements = np.diag(1/np.diagonal(E))
-    sigma[:diagonal_elements.shape[0], :diagonal_elements.shape[1]] = diagonal_elements
-    return V@sigma@U_T
+    diagonal_elements = np.diag(1 / np.diagonal(E))
+    sigma[
+        : diagonal_elements.shape[0], : diagonal_elements.shape[1]
+    ] = diagonal_elements
+    return V @ sigma @ U_T

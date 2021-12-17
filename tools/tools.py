@@ -15,7 +15,9 @@ from typing import Callable, Optional
 from matplotlib.figure import Figure
 
 
-def numerical_gradient(f: Callable, key: str, eps: float = 1e-10, **kwargs) -> np.ndarray:
+def numerical_gradient(
+    f: Callable, key: str, eps: float = 1e-10, **kwargs
+) -> np.ndarray:
     """
     compute the gradient of the given function numerically.
     :param f: function whose gradient we want to compute.

@@ -30,7 +30,7 @@ def pca(matrix: np.ndarray, dimension: int) -> np.ndarray:
     n, m = matrix.shape
     feature_means = np.mean(matrix, axis=0)
     centered_matrix = matrix - feature_means
-    covariance_matrix = (1/(n-1)) * np.transpose(centered_matrix) @ centered_matrix
+    covariance_matrix = (1 / (n - 1)) * np.transpose(centered_matrix) @ centered_matrix
     eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
     sorted_eigenvalues_index = np.argsort(eigenvalues)[::-1]
     desired_eigenvalues_index = sorted_eigenvalues_index[:dimension]
