@@ -21,7 +21,7 @@ def xavier(layout: np.ndarray) -> Dict:
 
     for layer in range(layers):
         amp = np.sqrt(6) / np.sqrt(layout[layer] + layout[layer + 1])
-        weight = np.random.uniform(-amp, amp, (layout[layer + 1], layout[layer]))
-        weights[layer] = np.c_[weight, np.zeros(layout[layer + 1])]
+        weight = np.random.uniform(-amp, amp, (layout[layer], layout[layer + 1]))
+        weights[layer] = np.vstack([weight, np.zeros(layout[layer + 1])])
 
     return weights

@@ -21,7 +21,7 @@ def he(layout: np.ndarray) -> Dict:
 
     for layer in range(layers):
         amp = np.sqrt(2 / layout[layer])
-        weight = amp * np.random.randn(layout[layer + 1], layout[layer])
-        weights[layer] = np.c_[weight, np.zeros(layout[layer + 1])]
+        weight = amp * np.random.randn(layout[layer], layout[layer + 1])
+        weights[layer] = np.vstack([weight, np.zeros(layout[layer + 1])])
 
     return weights
