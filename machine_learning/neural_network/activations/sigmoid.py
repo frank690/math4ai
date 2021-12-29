@@ -18,4 +18,6 @@ def sigmoid(data: np.ndarray, gradient: bool = False) -> np.ndarray:
     """
     if gradient is True:
         return sigmoid(data=data) * (1 - sigmoid(data=data))
-    return 1 / (1 - np.exp(-data))
+
+    with np.errstate(over="ignore"):
+        return 1 / (1 + np.exp(-data))

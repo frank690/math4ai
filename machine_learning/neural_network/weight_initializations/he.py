@@ -4,24 +4,27 @@ __all__ = [
     "he",
 ]
 
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 
 
-def he(layout: np.ndarray) -> Dict:
+def he(layout: np.ndarray) -> Tuple[Dict, Dict]:
     """
-    Initialize the weights of the given layer number with he-et-al's method.
+    Initialize the weights and biases of the given layer number with he-et-al's method.
     https://arxiv.org/abs/1502.01852
     :param layout: Number of neurons per layer.
-    :return: Dictionary with layer number as key and weight matrix as value.
+    :return: Tuple of two dictionaries. one of weight matrix and bias vector per number of connected layers.
     """
     weights = dict()
-    layers = layout.size - 1
+    biases = dict()
+    layers = layout.size
 
-    for layer in range(layers):
-        amp = np.sqrt(2 / layout[layer])
-        weight = amp * np.random.randn(layout[layer], layout[layer + 1])
-        weights[layer] = np.vstack([weight, np.zeros(layout[layer + 1])])
+    for l in range(1, layers):
+        amp = np.sqrt(2 / layout[l - 1])
+        weight = amp * np.random.randn(layout[l - 1], layout[l])
 
-    return weights
+        weights[l] = weight
+        biases[l] = np.zeros(layout[l])
+
+    return weights, biases

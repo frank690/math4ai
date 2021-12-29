@@ -8,11 +8,11 @@ __all__ = [
 ]
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 from typing import Callable, Optional
-from matplotlib.figure import Figure
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.pyplot import Axes, Figure
 
 
 def numerical_gradient(
@@ -52,14 +52,24 @@ def numerical_gradient(
     return np.squeeze((incremental_results - base_result) / eps)
 
 
-def draw_learning_curve(data: np.ndarray, figure: Optional[Figure] = None) -> Figure:
+def draw_learning_curve(
+    data: np.ndarray, axis: Optional[Axes] = None
+) -> Optional[Figure]:
     """
     Draws the learning curve of the given data array.
     :param data: Cost trend to plot.
-    :param figure: Figure to update with the given data.
-    :return: Figure containing the learning curve.
+    :param axis: Axis of figure to update with the given data.
+    :return: Newly created figure containing the learning curve iff no axis was given.
     """
-    if figure is None:
+    if axis is None:
         figure = plt.figure()
+        axis = figure.add_subplot(111)
+    else:
+        figure = None
+
+    axis.set_title("Learning Curve", fontsize=18)
+    axis.set_xlabel("Number of iterations", fontsize=15)
+    axis.set_ylabel("Loss", fontsize=15)
+    axis.plot([i for i in range(len(data))], data)
 
     return figure

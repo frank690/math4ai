@@ -4,12 +4,12 @@ __all__ = [
     "xavier",
 ]
 
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 
 
-def xavier(layout: np.ndarray) -> Dict:
+def xavier(layout: np.ndarray) -> Tuple[Dict, Dict]:
     """
     Initialize the weights of all layers given their layout with the xavier method.
     http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf
@@ -17,11 +17,14 @@ def xavier(layout: np.ndarray) -> Dict:
     :return: Dictionary with layer number as key and weight matrix as value.
     """
     weights = dict()
-    layers = layout.size - 1
+    biases = dict()
+    layers = layout.size
 
-    for layer in range(layers):
-        amp = np.sqrt(6) / np.sqrt(layout[layer] + layout[layer + 1])
-        weight = np.random.uniform(-amp, amp, (layout[layer], layout[layer + 1]))
-        weights[layer] = np.vstack([weight, np.zeros(layout[layer + 1])])
+    for l in range(1, layers):
+        amp = np.sqrt(6) / np.sqrt(layout[l + 1] + layout[l])
+        weight = np.random.uniform(-amp, amp, (layout[l + 1], layout[l]))
 
-    return weights
+        weights[l] = np.vstack([weight, np.zeros(layout[l])])
+        biases[l] = np.zeros(layout[l])
+
+    return weights, biases
