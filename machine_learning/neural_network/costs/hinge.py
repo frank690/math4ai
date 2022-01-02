@@ -14,4 +14,4 @@ def hinge_loss(h: np.ndarray, y: np.ndarray) -> float:
     :param y: True results of the data. y is expected to ONLY consist of -1 and +1 !
     :return: Cost/Loss of the current hypothesis.
     """
-    return (1 / y.size) * np.mean(np.maximum(0, 1 - h * y))
+    return np.mean(np.maximum(0, 1 - h * y))

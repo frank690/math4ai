@@ -17,7 +17,8 @@ def sigmoid(data: np.ndarray, gradient: bool = False) -> np.ndarray:
     :return: Sigmoid (or its gradient) applied to the given data.
     """
     if gradient is True:
-        return sigmoid(data=data) * (1 - sigmoid(data=data))
+        result = sigmoid(data=data)
+        return result * (1.0 - result)
 
     with np.errstate(over="ignore"):
-        return 1 / (1 + np.exp(-data))
+        return 1.0 / (1.0 + np.exp(-data))

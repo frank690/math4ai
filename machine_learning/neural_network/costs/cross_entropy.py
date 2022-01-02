@@ -4,8 +4,6 @@ __all__ = [
     "cross_entropy_loss",
 ]
 
-from typing import Union
-
 import numpy as np
 
 
@@ -20,5 +18,5 @@ def cross_entropy_loss(
     :return: Cost/Loss of the current hypothesis (or its gradients).
     """
     if gradient is True:
-        return -(1 / y.size) * ((y // h) - ((1 - y) // (1 - h)))
-    return -(1 / y.size) * ((y.T @ np.log(h)) + ((1 - y.T) @ np.log(1 - h)))
+        return -(y // h) + ((1 - y) // (1 - h))
+    return -((y.T @ np.log(h)) + ((1 - y.T) @ np.log(1 - h)))

@@ -21,10 +21,10 @@ def xavier(layout: np.ndarray) -> Tuple[Dict, Dict]:
     layers = layout.size
 
     for l in range(1, layers):
-        amp = np.sqrt(6) / np.sqrt(layout[l + 1] + layout[l])
-        weight = np.random.uniform(-amp, amp, (layout[l + 1], layout[l]))
+        amp = np.sqrt(6) / np.sqrt(layout[l] + layout[l - 1])
+        weight = np.random.uniform(-amp, amp, (layout[l - 1], layout[l]))
 
-        weights[l] = np.vstack([weight, np.zeros(layout[l])])
+        weights[l] = weight
         biases[l] = np.zeros(layout[l])
 
     return weights, biases

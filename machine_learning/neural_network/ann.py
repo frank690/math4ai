@@ -9,15 +9,21 @@ from typing import Tuple
 import numpy as np
 
 from machine_learning.neural_network.activations import sigmoid
-from machine_learning.neural_network.costs import sum_squares_loss
+from machine_learning.neural_network.costs import cross_entropy_loss
+from machine_learning.neural_network.regularizations import l2
 from machine_learning.neural_network.weight_initializations import he, xavier
-from tools.tools import draw_learning_curve
 
 
 class NeuralNetwork:
     """A class that represents a neural network."""
 
-    def __init__(self, layout: np.ndarray):
+    def __init__(
+        self,
+        layout: np.ndarray,
+        learning_rate: float = 1.0,
+        regularization_parameter: float = 0.0,
+        iterations: int = 1000,
+    ):
         """
         Initialize the neural network.
         :param layout: the layout of the layers as a 1D vector.
@@ -30,11 +36,14 @@ class NeuralNetwork:
         self.layout = layout
 
         self.activate = sigmoid
-        self.cost = sum_squares_loss
+        self.cost = cross_entropy_loss
+        self.regularization = l2
         self.weights, self.biases = he(layout=layout)
 
-        self.learning_rate = 0.01
-        self.iterations = 1000
+        self.learning_rate = learning_rate
+        self.iterations = iterations
+        self.regularization_parameter = regularization_parameter
+        self.threshold = 0.5
 
         self.z = dict()
         self.a = dict()
@@ -53,11 +62,29 @@ class NeuralNetwork:
         costs = []
         for i in range(self.iterations):
             self.forward_propagation(X=X)
-            costs.append(self.cost(h=self.a[self.L], y=y))
+            costs.append(self.loss(y=y))
             self.backward_propagation(y=y)
             self.gradient_descent()
 
         return np.concatenate(costs)
+
+    def loss(self, y: np.ndarray, gradient: bool = False) -> np.ndarray:
+        """
+        Compute the loss of the current model with respect to the chosen cost and regularization function.
+        :param y: output data.
+        :param gradient: Flag to indicate if gradient should be returned.
+        :return: Loss of the current model.
+        """
+        cost = self.cost(h=self.h, y=y, gradient=gradient)
+        cost += np.sum(
+            [
+                self.regularization(
+                    w=w, gradient=gradient, l=self.regularization_parameter
+                )
+                for w in self.weights.values()
+            ]
+        )
+        return cost
 
     def forward_propagation(self, X: np.ndarray):
         """
@@ -75,10 +102,10 @@ class NeuralNetwork:
         Run the forward propagation from input to output layer.
         :param y: output data to run backwards through the neural network
         """
-        self.da[self.L] = self.cost(h=self.h, y=y, gradient=True)
+        self.da[self.L] = self.loss(y=y, gradient=True)
 
         for l in range(self.L, 0, -1):
-            self.dz[l] = self.activate(data=self.da[l], gradient=True)
+            self.dz[l] = self.activate(data=self.z[l], gradient=True)
             self.da[l - 1] = self.dz[l] @ self.weights[l].T
 
     def gradient_descent(self):
@@ -86,9 +113,9 @@ class NeuralNetwork:
         Run the gradient descent method to update the weights and biases.
         """
         for l in range(1, self.L + 1):
-            tri = self.da[l] * self.dz[l]
+            tri = (self.da[l] * self.dz[l]) / (self.da[l].shape[0])
             self.weights[l] -= self.learning_rate * (self.a[l - 1].T @ tri)
-            self.biases[l] -= self.learning_rate * np.mean(tri, axis=0)
+            self.biases[l] -= self.learning_rate * np.sum(tri, axis=0)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -106,7 +133,7 @@ class NeuralNetwork:
         :return: Predictions as binary result (1 or 0).
         """
         y_pred = self.predict(X=X)
-        return np.array([1 if yi[0] >= 0 else 0 for yi in y_pred])
+        return np.array([[1 if yi[0] >= self.threshold else 0 for yi in y_pred]]).T
 
     def accuracy(self, X: np.ndarray, y: np.ndarray):
         """
@@ -146,11 +173,7 @@ if __name__ == "__main__":
     X_train, y_train = generate_data(N=100)
     X_test, y_test = generate_data(N=50)
 
-    nn = NeuralNetwork(layout=np.array([2, 4, 2, 1]))
+    nn = NeuralNetwork(layout=np.array([2, 3, 1]))
     J = nn.fit(X=X_train, y=y_train)
 
     nn.accuracy(X=X_test, y=y_test)
-
-    fig = draw_learning_curve(data=J)
-    fig.show()
-    a = 1
