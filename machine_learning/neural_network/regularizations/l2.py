@@ -17,5 +17,5 @@ def l2(w: np.ndarray, l: float = 0.01, gradient: bool = False) -> np.ndarray:
     :return: L2 regularization penalty for the given weights.
     """
     if gradient is True:
-        return 2 * l * np.sum(w)
-    return l * np.sum(np.square(w))
+        return l * np.sum(w)
+    return 0.5 * l * np.sum(np.square(w))

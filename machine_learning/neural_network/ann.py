@@ -76,6 +76,9 @@ class NeuralNetwork:
         :return: Loss of the current model.
         """
         cost = self.cost(h=self.h, y=y, gradient=gradient)
+        if gradient is True:
+            return cost
+
         cost += np.sum(
             [
                 self.regularization(
@@ -84,7 +87,7 @@ class NeuralNetwork:
                 for w in self.weights.values()
             ]
         )
-        return cost
+        return (1 / y.size) * cost
 
     def forward_propagation(self, X: np.ndarray):
         """
@@ -105,17 +108,23 @@ class NeuralNetwork:
         self.da[self.L] = self.loss(y=y, gradient=True)
 
         for l in range(self.L, 0, -1):
-            self.dz[l] = self.activate(data=self.z[l], gradient=True)
+            self.dz[l] = self.da[l] * self.activate(data=self.z[l], gradient=True)
             self.da[l - 1] = self.dz[l] @ self.weights[l].T
 
     def gradient_descent(self):
         """
         Run the gradient descent method to update the weights and biases.
         """
-        for l in range(1, self.L + 1):
-            tri = (self.da[l] * self.dz[l]) / (self.da[l].shape[0])
-            self.weights[l] -= self.learning_rate * (self.a[l - 1].T @ tri)
-            self.biases[l] -= self.learning_rate * np.sum(tri, axis=0)
+        m = self.a[0].shape[0]
+
+        for l in range(self.L, 0, -1):
+            self.weights[l] -= self.learning_rate * (
+                (self.a[l - 1].T @ self.dz[l]) * (1 / m)
+                + self.regularization(
+                    w=self.weights[l], l=self.regularization_parameter, gradient=True
+                )
+            )
+            self.biases[l] -= self.learning_rate * np.mean(self.dz[l], axis=0)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
