@@ -68,8 +68,8 @@ def draw_learning_curve(
         figure = None
 
     axis.set_title("Learning Curve", fontsize=18)
-    axis.set_xlabel("Number of iterations", fontsize=15)
-    axis.set_ylabel("Loss", fontsize=15)
+    axis.set_xlabel("Number of iterations", fontsize=18)
+    axis.set_ylabel("Loss", fontsize=18)
     axis.plot([i for i in range(len(data))], data)
 
     return figure
