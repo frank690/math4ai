@@ -6,7 +6,6 @@ __all__ = [
 
 from typing import Optional
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -19,9 +18,6 @@ def k_means(data: np.ndarray, k: int = 3, iterations: int = 5):
     :param iterations: Number of times to run the algorithm.
     :Note: It is assumed that each row in the given data represents a sample.
     """
-    fig, axs = plt.subplots(iterations, 1, figsize=(20, 5 * iterations))
-    cmap = "Set1"
-
     means = None
     grouping = None
 
@@ -29,21 +25,6 @@ def k_means(data: np.ndarray, k: int = 3, iterations: int = 5):
         means = _compute_cluster_means(data=data, k=k, grouping=grouping)
         distances = _compute_distances(data=data, k=k, means=means)
         grouping = np.argmin(distances, axis=1)
-
-        axs[iteration].scatter(
-            data[:, 0], data[:, 1], label="data", s=20, c=grouping, cmap=cmap
-        )
-        axs[iteration].scatter(
-            means[:, 0],
-            means[:, 1],
-            label="means",
-            marker="x",
-            s=200,
-            c=np.unique(grouping),
-            cmap=cmap,
-        )
-
-    plt.show()
     return means, grouping
 
 
@@ -51,7 +32,7 @@ def _distance_to_point(data: np.ndarray, point: np.ndarray) -> np.ndarray:
     """
     Compute the squared distance of each sample (row) n in the given data to the given point.
     :param data: Samples to compute distance to point to.
-    :param point: Point to compute distnace to.
+    :param point: Point to compute distance to.
     :return: 1D Numpy array of length n that holds all distances to the given point.
     """
     return np.array([np.sum(np.square(sample - point)) for sample in data])
@@ -93,3 +74,23 @@ def _compute_distances(data: np.ndarray, k: int, means: np.ndarray) -> np.ndarra
     for dim in range(k):
         distances[:, dim] = _distance_to_point(data=data, point=means[dim, :])
     return distances
+
+
+if __name__ == "__main__":
+    """run some demo of the k-means algorithm by downsizing a given picture."""
+    import matplotlib.image as img
+
+    k = 5
+    iterations = 10
+    image = img.imread("../../data/road.png")[:, :, :3]  # ignore alpha
+    w, h, d = image.shape
+    image = image.reshape((w * h, d))
+    means, grouping = k_means(data=image, k=k, iterations=iterations)
+    most_frequent_color_by_group = np.array(
+        [np.median(image[grouping == group], axis=0) for group in range(k)]
+    )
+    unrolled_reduced_image = np.array(
+        [most_frequent_color_by_group[group] for group in grouping]
+    )
+    reduced_image = unrolled_reduced_image.reshape((w, h, d))
+    img.imsave("reduced_road.png", reduced_image)
