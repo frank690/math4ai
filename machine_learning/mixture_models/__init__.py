@@ -2,6 +2,8 @@
 
 __all__ = [
     "k_means",
+    "EM",
 ]
 
+from .em import EM
 from .k_means import *

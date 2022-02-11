@@ -4,14 +4,13 @@ __all__ = [
     "NeuralNetwork",
 ]
 
-from typing import Tuple
-
 import numpy as np
 
 from machine_learning.neural_network.activations import sigmoid
 from machine_learning.neural_network.costs import cross_entropy_loss
 from machine_learning.neural_network.regularizations import l2
 from machine_learning.neural_network.weight_initializations import he, xavier
+from tools.data_creation import xnor
 
 
 class NeuralNetwork:
@@ -164,23 +163,9 @@ class NeuralNetwork:
         )
 
 
-def generate_data(N: int) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Generate a data for training our linear model.
-    :param N: number of samples multiplier.
-    :return: tuple of x and y data as numpy ndarrays.
-    """
-    X = np.repeat(np.array([[0, 0], [0, 1], [1, 0], [1, 1]]), N, axis=0)
-    X = X + np.random.randn(4 * N, 2) * 0.2
-    y = np.repeat([1, 0, 0, 1], N)
-    y = np.reshape(y, (len(y), 1))
-
-    return X, y
-
-
 if __name__ == "__main__":
-    X_train, y_train = generate_data(N=100)
-    X_test, y_test = generate_data(N=50)
+    X_train, y_train = xnor(N=100)
+    X_test, y_test = xnor(N=50)
 
     nn = NeuralNetwork(layout=np.array([2, 3, 1]))
     J = nn.fit(X=X_train, y=y_train)

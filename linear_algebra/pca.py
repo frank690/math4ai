@@ -14,7 +14,7 @@ def pca(matrix: np.ndarray, dimension: int) -> np.ndarray:
     Run the principal component analysis and return a matrix that reduces any given datapoint from the vector space of
     the given matrix to a vector space of the desired dimension.
     A PCA is computed in several steps.
-    1) Compute the mean (row wise) of the given matrix (X).
+    1) Compute the mean of the given matrix (X).
     2) Center the data by subtracting the mean (X - mean(X)).
     3) Compute covariance matrix of X*X^T.
     4) Compute eigenvalues of covariance matrix.
